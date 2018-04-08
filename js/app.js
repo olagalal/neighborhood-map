@@ -32,11 +32,16 @@ var locations = [
     },
 ];
 
+/* View Model */
 var viewModel = function () {
 
-	var currentInfoWindow = null; 
+	var currentInfoWindow = null;
 	var x = this;
-	x.selectLocation = ko.observableArray([]);
+	var selectLocation = ko.observableArray([]);
+	x.filterVar = ko.observable("");
+
+	var list = document.getElementById('names');
+	var index = 0;
 
 	/* Put Location Markers */
 	locations.forEach(function (loc) {
@@ -49,7 +54,8 @@ var viewModel = function () {
 			map: map
 		});
 
-		x.selectLocation.push(marker);
+		/* Array of Location as Markers */
+		selectLocation.push(marker);
 
 		/* Put Location Infowindow */
 		var infowindow = new google.maps.InfoWindow({
@@ -62,13 +68,112 @@ var viewModel = function () {
 			}
 			infowindow.open(map, marker);
 			currentInfoWindow = infowindow;
+			
+			marker.setAnimation(google.maps.Animation.BOUNCE);
+                setTimeout(function() {
+                    marker.setAnimation(null);
+                }, 1200);
+			
 		});
 
+		/* Add Locations as List */
+		var listElement = document.createElement('li');
+		listElement.appendChild(document.createTextNode(loc.locationname));
+		list.appendChild(listElement);
+		/* Add Attribute id to each li */
+		var att = document.createAttribute("id");
+		att.value = index;
+		index++;
+		listElement.setAttributeNode(att);
+
+	});
+	
+	/* Event Listener of click on location on the list */
+	$("#names li").click(function(){
+		var currentLocation = selectLocation()[this.id];
+		//alert(selectLocation()[this.id].locationname);
+		
+		//Animate its marker
+		currentLocation.setAnimation(google.maps.Animation.BOUNCE);
+                setTimeout(function() {
+                    currentLocation.setAnimation(null);
+                }, 1000);
+		
+		//Show InfoWindow
+		var infowindow = new google.maps.InfoWindow({
+			content: '<p>Marker Location: ' + currentLocation.locationname + '</p>'
+		});
+		
+		if (currentInfoWindow != null) {
+				currentInfoWindow.close();
+			}
+				
+		currentInfoWindow = infowindow;
+
+		infowindow.open(map, currentLocation);
+		
 	});
 
+
+	/* Event of Filter the locations */
+	x.filteredLocation = function (input) {
+
+		//Clear previous list
+		while (list.firstChild) {
+			list.removeChild(list.firstChild);
+		}
+
+		//Show Filtered only
+		for (var i = 0; i < selectLocation().length; i++) {
+			//List
+			if (selectLocation()[i].locationname.toLowerCase().indexOf(input.toLowerCase()) >= 0) {
+				var listElement = document.createElement('li');
+				listElement.appendChild(document.createTextNode(selectLocation()[i].locationname));
+				list.appendChild(listElement);
+
+
+			} else {
+				selectLocation()[i].setMap(null);
+			}
+		}
+	};
+
+	/* View All Locations */
+	x.allLocation = function () {
+		//Clear previous list
+		while (list.firstChild) {
+			list.removeChild(list.firstChild);
+		}
+
+		//All list
+		locations.forEach(function (loc) {
+			var listElement = document.createElement('li');
+			listElement.appendChild(document.createTextNode(loc.locationname));
+			list.appendChild(listElement);
+
+		})
+
+		for (var i = 0; i < selectLocation().length; i++) {
+			selectLocation()[i].setMap(map);
+		}
+	};
+
+	/* Filter Button Action */
+	x.toFilter = function () {
+
+		var filterInput = x.filterVar();
+		infowindow.close;
+
+		if (filterInput.length == 0) {
+			x.allLocation();
+		} else {
+			x.filteredLocation(filterInput);
+		}
+		infowindow.close();
+
+	};
+
 };
-
-
 
 /* Ininalize the Map */
 function initMap() {

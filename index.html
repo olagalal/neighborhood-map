@@ -20,12 +20,13 @@
 		<div class="menu">
 			<div class="content">
 				<h3>My Neighbourhood Map</h3>
-            <p>This is a map of my city and some of my favourite places to eat. ♥</p>
-				<input type="text" name="search">
-				<button id="filter">Filter</button>
+				<p>This is a map of my city and some of my favourite places to eat. ♥</p>
+				<input placeholder="Enter Text" data-bind="value: filterVar">
+				<button data-bind="click: toFilter" id="filter">Filter</button>
 			</div>
 			<div class="locations">
-				
+				<ul id="names">
+				</ul>
 			</div>
 		</div>
 	</div>

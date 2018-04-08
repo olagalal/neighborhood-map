@@ -59,3 +59,17 @@ body {
 	margin-left: 16px;
 	margin-top: 20px;
 }
+
+#names {
+	color: #fff;
+	margin-right: 12px;
+	margin-top: 200px;
+}
+
+#names li {
+	margin-bottom: 10px;
+}
+
+#names li:hover {
+	cursor: pointer;
+}
