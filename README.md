@@ -20,3 +20,5 @@ This single page application shows a map of historical places in Cairo - Egypt. 
 
 ## How to View This App
 1. Download the source code at: https://github.com/olaglal/neighborhood-map
+2. Unzip the file
+3. open index.html 
